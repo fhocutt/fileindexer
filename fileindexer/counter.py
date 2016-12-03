@@ -61,25 +61,30 @@ def count_frequency(words):
     return word_count
 
 
-def find_top_words(word_count, n=10):  # would rather not hard-code this
-    """
+def find_top_words(word_count, n=10):  # would rather not hard-code this but
+                                       # spec said logic should return 10 words
+    """Return the most frequent words from a frequency-counted dict.
+
+    Sort through a given word:word frequency dict by value to return
+    (word, frequency) tuples for the most common n words in the dict.
+
     Parameters
     ----------
     word_count : dict
-        dict mapping str:int
+        A dict mapping words to their frequencies (str: int).
     n : int
-        number of words to return, default 10
+        The number of words to return, default 10.
 
     Returns
     -------
     list
-        a list of tuples containing (word[string], frequency[int])
-
+        A list of tuples containing (word[string], frequency[int])
     """
     return sorted(word_count.items(), key=lambda x: x[1], reverse=True)[:n]
 
 
 if __name__ == '__main__':
+    # Small test script
     with open('tests/files/anne_of_green_gables.txt', 'r') as f:
         text = f.read()
     words = split_words(text)
