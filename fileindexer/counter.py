@@ -32,7 +32,7 @@ def split_words(text):
     list
         List of strings, containing individual words and word fragments
     """
-    p = re.compile(r'[^a-zA-Z0-9]')  # this will split on accents and non-Latin
+    p = re.compile(r'[^a-zA-Z0-9]')  # this will split on accents and Unicode
     split_text = p.split(text)
     words = [word for word in split_text if word]  # strip empty strings
     return words
@@ -61,8 +61,8 @@ def count_frequency(words):
     return word_count
 
 
-def find_top_words(word_count, n=10):  # would rather not hard-code this but
-                                       # spec said logic should return 10 words
+def find_top_words(word_count, n=10):  # would rather not hard-code but spec
+                                       # said logic should return 10 words
     """Return the most frequent words from a frequency-counted dict.
 
     Sort through a given word:word frequency dict by value to return
