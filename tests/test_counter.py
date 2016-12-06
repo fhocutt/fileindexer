@@ -1,5 +1,20 @@
 #!usr/bin/env python3
-"""Tests for counter.py"""
+"""Tests for counter.py
+
+Tests for the split_words, count_frequency, and find_top_words methods
+of fileindexer.counter. Although Unicode code points and bytestrings are
+not expected input, tests account for them so that any changes to
+behavior are visible.
+
+To test with a larger dataset, the following files are expected and
+provided, courtesy of Project Gutenberg (https://www.gutenberg.org):
+    files/anne_of_green_gables.txt
+    files/anne_of_green_gables_word_list.json
+    files/anne_of_green_gables_freq_dict.json
+    files/anne_of_green_gables_top_words.json
+"""
+
+import json
 
 import pytest
 
@@ -18,8 +33,8 @@ def test_split_words_all_symbols():
     assert split_words('!@#$%^&*') == []
 
 
-def test_split_words_with_accent():
-    assert split_words('Est-ce que ça te plaît?')\
+def test_split_words_Unicode_input():
+    assert split_words('Est-ce que ça te plaît? 漢字') \
         == ['Est', 'ce', 'que', 'a', 'te', 'pla', 't']
 
 
@@ -30,9 +45,8 @@ def test_split_words_long_file():
     word_list = split_words(text)
 
     # reference/correct list
-    with open('files/anne_of_green_gables_word_list.txt') as reference:
-        correct_list_str = reference.read()
-    correct_list = eval(correct_list_str)
+    with open('files/anne_of_green_gables_word_list.json') as reference:
+        correct_list = json.loads(reference.read())
 
     assert word_list == correct_list
 
@@ -62,21 +76,19 @@ def test_count_frequency_bytestring_input():
                                                         'chicken': 1}
 
 
-def test_count_frequency_non_latin_input():
+def test_count_frequency_Unicode_input():
     assert count_frequency(['漢字', '漢字']) == {'漢字': 2}
 
 
 def test_count_frequency_book_length_input():
     # code to test
-    with open('files/anne_of_green_gables_word_list.txt') as word_list_file:
-        word_list_str = word_list_file.read()
-    word_list = eval(word_list_str)
+    with open('files/anne_of_green_gables_word_list.json') as word_list_file:
+        word_list = json.loads(word_list_file.read())
     freq_dict = count_frequency(word_list)
 
     # reference/correct list
-    with open('files/anne_of_green_gables_freq_dict.txt') as reference:
-        correct_freq_dict_str = reference.read()
-    correct_freq_dict = eval(correct_freq_dict_str)
+    with open('files/anne_of_green_gables_freq_dict.json') as reference:
+        correct_freq_dict = json.loads(reference.read())
 
     assert freq_dict == correct_freq_dict
 
@@ -99,14 +111,15 @@ def test_find_top_words_fewer_items():
 
 def test_find_top_words_book_length_input():
     # code to test
-    with open('files/anne_of_green_gables_freq_dict.txt') as freq_dict_file:
-        freq_dict_str = freq_dict_file.read()
-    freq_dict = eval(freq_dict_str)
+    with open('files/anne_of_green_gables_freq_dict.json') as freq_dict_file:
+        freq_dict = json.loads(freq_dict_file.read())
     top_words = find_top_words(freq_dict)
+    # json reference file is a list of lists not a list of tuples, compare
+    # as json
+    top_words_json = json.dumps(top_words, indent=4)
 
     # reference/correct list
-    with open('files/anne_of_green_gables_top_words.txt') as reference:
-        correct_top_words_str = reference.read()
-    correct_top_words = eval(correct_top_words_str)
+    with open('files/anne_of_green_gables_top_words.json') as reference:
+        correct_top_words_json = reference.read()
 
-    assert top_words == correct_top_words
+    assert top_words_json == correct_top_words_json
